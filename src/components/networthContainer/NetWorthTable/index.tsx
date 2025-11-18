@@ -1,31 +1,7 @@
 import { useState } from "react";
+import { formatCurrency, getToday, normalizeDate } from "./helper";
+import type { NetworthEntry, PropsNetworthTable } from "./type";
 
-export interface AccountName {
-  id: string;
-  name: string;
-}
-
-export interface AccountType {
-  id: string;
-  type: string;
-  accountNames: AccountName[];
-}
-
-export interface NetworthEntry {
-  id: string;
-  accountType: string;
-  accountName: string;
-  balance: number;
-  snapshotDate: string; // YYYY-MM-DD or ISO
-}
-
-interface Props {
-  entries: NetworthEntry[];
-  accountTypes: AccountType[];
-  onUpdate: (id: string, fields: Partial<NetworthEntry>) => Promise<void> | void;
-  onDelete: (id: string) => Promise<void> | void;
-  onAdd: (row: Omit<NetworthEntry, "id">) => Promise<void> | void;
-}
 
 export default function NetworthTable({
   entries,
@@ -33,7 +9,7 @@ export default function NetworthTable({
   onUpdate,
   onDelete,
   onAdd,
-}: Props) {
+}: PropsNetworthTable) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editState, setEditState] = useState<Record<string, Partial<NetworthEntry>>>({});
 
@@ -393,20 +369,3 @@ export default function NetworthTable({
   );
 }
 
-/* Helpers */
-function getToday(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-    d.getDate()
-  ).padStart(2, "0")}`;
-}
-
-function normalizeDate(dateStr: string): string {
-  if (!dateStr) return getToday();
-  return dateStr.split("T")[0];
-}
-
-function formatCurrency(num: number): string {
-  if (num < 0) return `-₹${Math.abs(num)}`;
-  return `₹${num}`;
-}
