@@ -1,5 +1,5 @@
 import { API } from "../../../api";
-import type { NetworthEntry } from "../NetWorthTable";
+import type { NetworthEntry } from "../NetWorthTable/type";
 
 export const addEntryFn = async (
   payload: Omit<NetworthEntry, "id">,
