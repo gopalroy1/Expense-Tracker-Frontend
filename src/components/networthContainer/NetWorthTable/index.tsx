@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "sonner";
+import { API } from "../../../api";
+import EditableDropdown from "./editableDropdown";
 import { formatCurrency, getToday, normalizeDate } from "./helper";
 import type { NetworthEntry, PropsNetworthTable } from "./type";
-
 
 export default function NetworthTable({
   entries,
@@ -10,20 +13,26 @@ export default function NetworthTable({
   onDelete,
   onAdd,
 }: PropsNetworthTable) {
+  const dispatch = useDispatch();
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editState, setEditState] = useState<Record<string, Partial<NetworthEntry>>>({});
 
   const [newRowVisible, setNewRowVisible] = useState(false);
   const [newRow, setNewRow] = useState<Partial<NetworthEntry>>({
     accountType: "",
-      accountName: "",
-    //@ts-ignore
+    accountName: "",
+          //@ts-ignore
+
     balance: "",
     snapshotDate: getToday(),
   });
 
+  const getTypeObj = (type: string | undefined) =>
+    accountTypes.find((t) => t.type === type);
+
   const getNamesFor = (type: string | undefined) =>
-    accountTypes.find((t) => t.type === type)?.accountNames || [];
+    getTypeObj(type)?.accountNames || [];
 
   const startEdit = (row: NetworthEntry) => {
     setEditingId(row.id);
@@ -60,6 +69,15 @@ export default function NetworthTable({
     cancelEdit(id);
   };
 
+  const refreshAccounts = async () => {
+    try {
+      //@ts-ignore
+      await loadAccountsFn(dispatch, setAccounts);
+    } catch (err) {
+      toast.error("Unable to refresh accounts");
+    }
+  };
+
   const saveNew = async () => {
     if (!newRow.accountType || !newRow.accountName) return;
 
@@ -72,8 +90,8 @@ export default function NetworthTable({
 
     setNewRow({
       accountType: "",
-        accountName: "",
-          //@ts-ignore
+      accountName: "",
+            //@ts-ignore
 
       balance: "",
       snapshotDate: getToday(),
@@ -105,29 +123,46 @@ export default function NetworthTable({
                 {/* Account Type */}
                 <td className="p-3">
                   {isEditing ? (
-                    <select
-                      className="border rounded px-2 py-1 w-full"
-                      value={local.accountType ?? ""}
-                      onChange={(e) =>
+                    <EditableDropdown
+                      label=""
+                      items={accountTypes.map((t) => ({ id: t.id, name: t.type }))}
+                      selected={{ name: local.accountType }}
+                            //@ts-ignore
+
+                      onSelect={(item) =>
                         setEditState((s) => ({
                           ...s,
                           [row.id]: {
                             ...(s[row.id] || {}),
-                            accountType: e.target.value,
+                            accountType: item.name,
                             accountName: "",
                           },
                         }))
                       }
-                    >
-                      <option value="">Select Type</option>
-                      {accountTypes.map((t) => (
-                        <option key={t.id} value={t.type}>
-                          {t.type}
-                        </option>
-                      ))}
-                    </select>
+                            //@ts-ignore
+
+                      onAdd={async (text) => {
+                        await API.addAccountType({ type: text });
+                        refreshAccounts();
+                      }}
+                            //@ts-ignore
+
+                      onUpdate={async (id, text) => {
+                        await API.updateType(id, { type: text });
+                        refreshAccounts();
+                      }}
+                            //@ts-ignore
+
+                      onDelete={async (id) => {
+                        await API.deleteAccountType(id);
+                        refreshAccounts();
+                      }}
+                    />
                   ) : (
-                    <span onClick={() => startEdit(row)} className="cursor-pointer select-none">
+                    <span
+                      onClick={() => startEdit(row)}
+                      className="cursor-pointer select-none"
+                    >
                       {row.accountType}
                     </span>
                   )}
@@ -136,28 +171,54 @@ export default function NetworthTable({
                 {/* Account Name */}
                 <td className="p-3">
                   {isEditing ? (
-                    <select
-                      className="border rounded px-2 py-1 w-full"
-                      value={local.accountName ?? ""}
-                      onChange={(e) =>
+                    <EditableDropdown
+                      label=""
+                      items={getNamesFor(local.accountType).map((n) => ({
+                        id: n.id,
+                        name: n.name,
+                      }))}
+                      selected={{ name: local.accountName }}
+                            //@ts-ignore
+
+                      onSelect={(item) =>
                         setEditState((s) => ({
                           ...s,
                           [row.id]: {
                             ...(s[row.id] || {}),
-                            accountName: e.target.value,
+                            accountName: item.name,
                           },
                         }))
                       }
-                    >
-                      <option value="">Select Name</option>
-                      {getNamesFor(local.accountType ?? row.accountType).map((n) => (
-                        <option key={n.id} value={n.name}>
-                          {n.name}
-                        </option>
-                      ))}
-                    </select>
+                            //@ts-ignore
+
+                      onAdd={async (text) => {
+                        const typeObj = getTypeObj(local.accountType);
+                        if (!typeObj) return;
+
+                        await API.addAccountName({
+                          accountTypeId: typeObj.id,
+                          name: text,
+                        });
+                        refreshAccounts();
+                      }}
+                            //@ts-ignore
+
+                      onUpdate={async (id, text) => {
+                        await API.updateName(id, { name: text });
+                        refreshAccounts();
+                      }}
+                            //@ts-ignore
+
+                      onDelete={async (id) => {
+                        await API.deleteAccountName(id);
+                        refreshAccounts();
+                      }}
+                    />
                   ) : (
-                    <span onClick={() => startEdit(row)} className="cursor-pointer select-none">
+                    <span
+                      onClick={() => startEdit(row)}
+                      className="cursor-pointer select-none"
+                    >
                       {row.accountName}
                     </span>
                   )}
@@ -175,7 +236,9 @@ export default function NetworthTable({
                           : String(local.balance)
                       }
                       onChange={(e) =>
-                        setEditState((s:any) => ({
+                              //@ts-ignore
+
+                        setEditState((s) => ({
                           ...s,
                           [row.id]: {
                             ...(s[row.id] || {}),
@@ -185,7 +248,10 @@ export default function NetworthTable({
                       }
                     />
                   ) : (
-                    <span onClick={() => startEdit(row)} className="cursor-pointer select-none">
+                    <span
+                      onClick={() => startEdit(row)}
+                      className="cursor-pointer select-none"
+                    >
                       {formatCurrency(row.balance)}
                     </span>
                   )}
@@ -260,45 +326,81 @@ export default function NetworthTable({
           {newRowVisible && (
             <tr className="border-b bg-green-50">
               <td className="p-3">
-                <select
-                  className="border rounded px-2 py-1 w-full"
-                  value={newRow.accountType ?? ""}
-                  onChange={(e) =>
+                <EditableDropdown
+                  label=""
+                  items={accountTypes.map((t) => ({ id: t.id, name: t.type }))}
+                  selected={{ name: newRow.accountType }}
+                        //@ts-ignore
+
+                  onSelect={(item) =>
                     setNewRow({
                       ...newRow,
-                      accountType: e.target.value,
+                      accountType: item.name,
                       accountName: "",
                     })
                   }
-                >
-                  <option value="">Select Type</option>
-                  {accountTypes.map((t) => (
-                    <option key={t.id} value={t.type}>
-                      {t.type}
-                    </option>
-                  ))}
-                </select>
+                        //@ts-ignore
+
+                  onAdd={async (text) => {
+                    await API.addAccountType({ type: text });
+                    refreshAccounts();
+                  }}
+                        //@ts-ignore
+
+                  onUpdate={async (id, text) => {
+                    await API.updateType(id, { type: text });
+                    refreshAccounts();
+                  }}
+                        //@ts-ignore
+
+                  onDelete={async (id) => {
+                    await API.deleteAccountType(id);
+                    refreshAccounts();
+                  }}
+                />
               </td>
 
               <td className="p-3">
-                <select
-                  className="border rounded px-2 py-1 w-full"
-                  value={newRow.accountName ?? ""}
-                  onChange={(e) =>
+                <EditableDropdown
+                  label=""
+                  items={getNamesFor(newRow.accountType).map((n) => ({
+                    id: n.id,
+                    name: n.name,
+                  }))}
+                  selected={{ name: newRow.accountName }}
+                        //@ts-ignore
+
+                  onSelect={(item) =>
                     setNewRow({
                       ...newRow,
-                      accountName: e.target.value,
+                      accountName: item.name,
                     })
                   }
-                  disabled={!newRow.accountType}
-                >
-                  <option value="">Select Name</option>
-                  {getNamesFor(newRow.accountType).map((n) => (
-                    <option key={n.id} value={n.name}>
-                      {n.name}
-                    </option>
-                  ))}
-                </select>
+                        //@ts-ignore
+
+                  onAdd={async (text) => {
+                    const typeObj = getTypeObj(newRow.accountType);
+                    if (!typeObj) return;
+
+                    await API.addAccountName({
+                      accountTypeId: typeObj.id,
+                      name: text,
+                    });
+                    refreshAccounts();
+                  }}
+                        //@ts-ignore
+
+                  onUpdate={async (id, text) => {
+                    await API.updateName(id, { name: text });
+                    refreshAccounts();
+                  }}
+                        //@ts-ignore
+
+                  onDelete={async (id) => {
+                    await API.deleteAccountName(id);
+                    refreshAccounts();
+                  }}
+                />
               </td>
 
               <td className="p-3">
@@ -306,9 +408,8 @@ export default function NetworthTable({
                   type="number"
                   className="border rounded px-2 py-1 w-full"
                   value={newRow.balance ?? ""}
-                                  onChange={(e) =>
-                          //@ts-ignore
-
+                  onChange={(e) =>
+                    //@ts-ignore
                     setNewRow({ ...newRow, balance: e.target.value })
                   }
                 />
@@ -337,9 +438,8 @@ export default function NetworthTable({
                     setNewRowVisible(false);
                     setNewRow({
                       accountType: "",
-                        accountName: "",
-                          //@ts-ignore
-
+                      accountName: "",
+                            //@ts-ignore
                       balance: "",
                       snapshotDate: getToday(),
                     });
@@ -354,7 +454,6 @@ export default function NetworthTable({
         </tbody>
       </table>
 
-      {/* Add new row button */}
       {!newRowVisible && (
         <div className="mt-4">
           <button
@@ -368,4 +467,3 @@ export default function NetworthTable({
     </div>
   );
 }
-
