@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import { API } from "../api";
@@ -8,39 +8,37 @@ import { loginSuccess, logout } from "../store/authSlice";
 
 const ProtectedRoute = () => {
   const dispatch = useDispatch();
-
   //@ts-ignore
   const user = useSelector((state) => state.auth.user);
 
-  const { callApi, loading } = useApi();
+  const { callApi } = useApi();
+
+  const [initializing, setInitializing] = useState(true);  
+  // <-- THIS FIXES YOUR BUG
 
   useEffect(() => {
     const check = async () => {
       try {
         const data = await callApi(() => API.isLoggedIn());
-        console.log("User is logged in: inside the protected route", data);
-        // update redux
-        dispatch(loginSuccess({ user: data.user, token: data.token }));
+        dispatch(loginSuccess({ user: data.data.user }));
       } catch {
         dispatch(logout());
       }
+      setInitializing(false); // <-- let component know check is done
     };
 
-    // Only check if user is not already available in redux
     if (!user) {
       check();
+    } else {
+      setInitializing(false);
     }
   }, []);
 
-  // Still loading = show loader
-  if (loading) return <Loader />;
+  // 🔥 FIX: do NOT redirect while initializing
+  if (initializing) return <Loader />;
 
-  // Not logged in = redirect
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/login" replace />;
 
-  // Logged in → allow component to render
   return <Outlet />;
 };
 

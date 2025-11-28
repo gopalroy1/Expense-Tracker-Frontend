@@ -45,7 +45,7 @@ const LoginPage: React.FC = () => {
     try {
       const data = await callApi(() => API.login(form));
       console.log("Login successful:", data);
-      dispatch(loginSuccess({ user: data.user, token: data.token }));
+      dispatch(loginSuccess({ user: data.user,  }));
       console.log("Navigating to dashboard...");
       navigate("/dashboard");
     } catch(error) {
