@@ -1,6 +1,5 @@
 import axiosInstance from "./axios/axiosInstane";
 
-export const BASE_URL_BACKEND = "http://localhost:5000";
 
 export const API_URL = {
   SIGN_UP: `/api/auth/signup`,
@@ -12,7 +11,7 @@ export const API_URL = {
 export const API = {
   // Auth
   signup: (data: any) => axiosInstance.post(API_URL.SIGN_UP, data),
-  login: (data: any) => axiosInstance.post(API_URL.LOGIN, data),
+  login: (data: any) => axiosInstance.post(API_URL.LOGIN, data,{withCredentials:true}),
   logout: () => axiosInstance.post(API_URL.LOG_OUT),
   isLoggedIn: () => axiosInstance.get(API_URL.IS_LOGGED_IN),
 
