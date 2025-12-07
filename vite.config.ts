@@ -10,8 +10,11 @@ export default defineConfig({
       "/api": {
         target: "http://13.232.1.113:3000",
         changeOrigin: true,
-      }
-    }
+      },
+    },
+    host: true,
+  allowedHosts: ['ec2-13-232-1-113.ap-south-1.compute.amazonaws.com']
+    
   }
 
 })
