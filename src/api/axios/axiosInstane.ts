@@ -4,7 +4,7 @@ import { store } from "../../store";
 import { logout } from "../../store/authSlice";
 
 const axiosInstance = axios.create({
-  // baseURL: "http://13.232.1.113:3000",
+  baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
   withCredentials: true,
 });
 

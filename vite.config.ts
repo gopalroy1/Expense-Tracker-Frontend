@@ -4,17 +4,7 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  server: {
-    proxy: {
-      "/api": {
-        target: "http://13.232.1.113:3000",
-        changeOrigin: true,
-      },
-    },
-    host: true,
-  allowedHosts: ['ec2-13-232-1-113.ap-south-1.compute.amazonaws.com']
-    
+  plugins: [react(), tailwindcss()]
   }
 
-})
+)
