@@ -44,8 +44,10 @@ const LoginPage: React.FC = () => {
     // 2. API call only if validation passes
     try {
       const data = await callApi(() => API.login(form));
-      console.log("Login successful:", data);
-      dispatch(loginSuccess({ user: data.user,  }));
+      console.log("Login successful:", data.data.user);
+      dispatch(loginSuccess({ user: data.data.user }));
+      console.log("The token saving in local storage",data.data.token)
+      localStorage.setItem("token", data.data.token);
       console.log("Navigating to dashboard...");
       navigate("/dashboard");
     } catch(error) {
