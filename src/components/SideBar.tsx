@@ -12,6 +12,7 @@ export const Sidebar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await callApi(() => API.logout());
+      localStorage.clear()
       navigate("/login");
     } catch {
       // errors handled inside the hook
