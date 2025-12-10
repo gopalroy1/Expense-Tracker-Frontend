@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { API } from "../api";
 import { useApi } from "../hooks/useApi";
 import { loginSuccess } from "../store/authSlice";
@@ -44,13 +45,15 @@ const LoginPage: React.FC = () => {
     // 2. API call only if validation passes
     try {
       const data = await callApi(() => API.login(form));
+      toast.success("Login successful");
       console.log("Login successful:", data.data.user);
       dispatch(loginSuccess({ user: data.data.user }));
       console.log("The token saving in local storage",data.data.token)
       localStorage.setItem("token", data.data.token);
       console.log("Navigating to dashboard...");
       navigate("/dashboard");
-    } catch(error) {
+    } catch (error) {
+      toast.error("Unable to login");
       console.error(error)
     }
   };

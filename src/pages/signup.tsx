@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { API } from "../api";
 import { useApi } from "../hooks/useApi";
 import { setAuthData } from "../utils/setAuth";
@@ -52,9 +53,11 @@ if (!result.success) {
     // 2. If valid, call API
     try {
       const data = await callApi(() => API.signup(form));
+      toast.success("Signup successful");
       setAuthData(data.token, data.user);
       navigate("/dashboard");
     } catch {
+      toast.error("Signup failed");
       // error from API is in `error`
     }
   };

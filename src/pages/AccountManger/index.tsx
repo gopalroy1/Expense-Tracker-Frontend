@@ -2,7 +2,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState, type JSX } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { API } from "../../api";
 import { useApi } from "../../hooks/useApi";
 import { setAccounts, setLoading } from "../../store/accountSlice";
@@ -171,7 +171,6 @@ export default function AccountManager(): JSX.Element {
     return (
         <>
             {/* Local Toaster in case root doesn't have one yet */}
-            <Toaster position="top-center" richColors />
 
             <div className="max-w-7xl mx-auto p-6">
                 <header className="flex items-center justify-between mb-6">
