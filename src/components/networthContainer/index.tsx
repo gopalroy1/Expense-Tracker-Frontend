@@ -57,6 +57,7 @@ export default function NetworthContainer() {
       await API.deleteNetworth(id);
       reload();
     } catch (err) {
+      
       console.error("Delete failed:", err);
       toast.error("Failed to delete entry");
     }

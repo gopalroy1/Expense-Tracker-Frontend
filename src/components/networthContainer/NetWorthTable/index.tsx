@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { API } from "../../../api";
+import ConfirmModal from "../../common/ConfirmModal";
 import EditableDropdown from "./editableDropdown";
 import { formatCurrency, getToday, normalizeDate } from "./helper";
 import type { NetworthEntry, PropsNetworthTable } from "./type";
@@ -27,6 +28,13 @@ export default function NetworthTable({
     balance: "",
     snapshotDate: getToday(),
   });
+  const [showConfirm, setShowConfirm] = useState(false);
+const [deleteId, setDeleteId] = useState<string | null>(null);
+
+const askDelete = (id: string) => {
+  setDeleteId(id);
+  setShowConfirm(true);
+};
 
   const getTypeObj = (type: string | undefined) =>
     accountTypes.find((t) => t.type === type);
@@ -60,11 +68,16 @@ export default function NetworthTable({
     const payload = editState[id];
     if (!payload) return;
 
-    await onUpdate(id, {
-      ...payload,
-      balance: payload.balance !== undefined ? Number(payload.balance) : undefined,
-      snapshotDate: payload.snapshotDate!,
-    });
+    try {
+      await onUpdate(id, {
+        ...payload,
+        balance: payload.balance !== undefined ? Number(payload.balance) : undefined,
+        snapshotDate: payload.snapshotDate!,
+      });
+      
+    } catch (error) {
+      toast.error("Failed to update entry");
+    }
 
     cancelEdit(id);
   };
@@ -289,7 +302,11 @@ export default function NetworthTable({
                   {isEditing ? (
                     <>
                       <button
-                        onClick={() => saveEdit(row.id)}
+                        onClick={() => {
+                          saveEdit(row.id)
+                          toast.success("Entry updated");
+                        } 
+                        }
                         className="text-green-600 font-medium hover:underline"
                       >
                         Save
@@ -310,7 +327,9 @@ export default function NetworthTable({
                         Edit
                       </button>
                       <button
-                        onClick={() => onDelete(row.id)}
+                          onClick={() => {
+                            askDelete(row.id);
+                          }}
                         className="text-red-600 hover:underline"
                       >
                         Delete
@@ -453,6 +472,26 @@ export default function NetworthTable({
           )}
         </tbody>
       </table>
+
+<ConfirmModal
+  open={showConfirm}
+  title="Delete Entry"
+  message="Are you sure you want to delete this entry? This action cannot be undone."
+  confirmText="Delete"
+  cancelText="Cancel"
+        onConfirm={() => {
+          onDelete(String(deleteId)) 
+          toast.success("Entry deleted");
+          setShowConfirm(false);
+          setDeleteId(null);
+        }}
+        onCancel={() => {
+          setShowConfirm(false)
+          setDeleteId(null);
+        }
+    
+  }
+/>
 
       {!newRowVisible && (
         <div className="mt-4">
