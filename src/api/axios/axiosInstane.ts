@@ -1,10 +1,11 @@
 import axios from "axios";
 
+import { BACKEND_BASE_URL } from "../../../env";
 import { store } from "../../store";
 import { logout } from "../../store/authSlice";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
+  baseURL: BACKEND_BASE_URL,
   withCredentials: true,
   
 });
