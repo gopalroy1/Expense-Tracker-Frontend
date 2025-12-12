@@ -10,6 +10,7 @@ import { setAccounts } from "../../store/accountSlice";
 import { addEntryFn } from "./functions/addEntry";
 import { loadAccountsFn } from "./functions/getAllData";
 import { loadEntriesFn } from "./functions/loadEntries";
+import MonthlyDonutChart from "./monthlyDonutChart";
 import NetworthTable from "./NetWorthTable";
 
 export default function NetworthContainer() {
@@ -92,6 +93,7 @@ export default function NetworthContainer() {
         }
         }
       />
+      {entries && entries.length > 0 && <MonthlyDonutChart entries={entries} />}
     </div>
   );
 }
