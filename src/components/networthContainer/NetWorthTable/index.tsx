@@ -5,6 +5,7 @@ import { API } from "../../../api";
 import ConfirmModal from "../../common/ConfirmModal";
 import EditableDropdown from "./editableDropdown";
 import { formatCurrency, getToday, normalizeDate } from "./helper";
+import ImportData from "./ImportData";
 import type { NetworthEntry, PropsNetworthTable } from "./type";
 
 export default function NetworthTable({
@@ -93,7 +94,12 @@ const askDelete = (id: string) => {
 
   const saveNew = async () => {
     if (!newRow.accountType || !newRow.accountName) return;
-
+    console.log("Before save", {
+      accountType: newRow.accountType!,
+      accountName: newRow.accountName!,
+      balance: Number(newRow.balance ?? 0),
+      snapshotDate: newRow.snapshotDate!,
+    });
     await onAdd({
       accountType: newRow.accountType!,
       accountName: newRow.accountName!,
@@ -127,7 +133,7 @@ const askDelete = (id: string) => {
         </thead>
 
         <tbody>
-          {entries.map((row) => {
+          { (entries?.length>0 || newRowVisible)? entries.map((row) => {
             const isEditing = editingId === row.id;
             const local = editState[row.id] || {};
 
@@ -276,7 +282,7 @@ const askDelete = (id: string) => {
                     <input
                       type="date"
                       className="border rounded px-2 py-1 w-full"
-                      value={local.snapshotDate ?? normalizeDate(row.snapshotDate)}
+                      // value={local.snapshotDate ?? normalizeDate(row.snapshotDate)}
                       onChange={(e) =>
                         setEditState((s) => ({
                           ...s,
@@ -339,7 +345,8 @@ const askDelete = (id: string) => {
                 </td>
               </tr>
             );
-          })}
+          }) :<ImportData></ImportData>
+          }
 
           {/* New Row */}
           {newRowVisible && (
@@ -438,7 +445,7 @@ const askDelete = (id: string) => {
                 <input
                   type="date"
                   className="border rounded px-2 py-1 w-full"
-                  value={newRow.snapshotDate ?? getToday()}
+                  defaultValue={newRow.snapshotDate ?? getToday()}
                   onChange={(e) =>
                     setNewRow({ ...newRow, snapshotDate: e.target.value })
                   }

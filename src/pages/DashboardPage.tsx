@@ -69,10 +69,17 @@ export const DashboardPage: React.FC = () => {
   // ----------------------------
   // Summary
   // ----------------------------
-  const totalNetworth = useMemo(
-    () => entries.reduce((s, e) => s + Number(e.balance || 0), 0),
-    [entries]
-  );
+const totalNetworth = useMemo(() => {
+  const m = Number(month);   // convert "09" → 9
+  const y = Number(year);
+
+  const filtered = entries.filter((e) => {
+    const d = new Date(e.snapshotDate);
+    return d.getMonth() + 1 === m && d.getFullYear() === y;
+  });
+
+  return filtered.reduce((s, e) => s + Number(e.balance || 0), 0);
+}, [entries, month, year]);
 
   // ----------------------------
   // Render

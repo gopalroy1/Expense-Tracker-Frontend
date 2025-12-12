@@ -70,7 +70,10 @@ export const API = {
     axiosInstance
       .delete(`/api/networth/delete/${id}`)
       .then((res) => res.data),
-
+  importNetworth: (body: { month: number, year: number, targetDate: string }) =>
+    axiosInstance
+      .post(`/api/networth/import`, body)
+      .then((res) => res.data),
 };
 
 

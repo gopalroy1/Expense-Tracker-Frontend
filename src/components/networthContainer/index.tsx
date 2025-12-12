@@ -57,7 +57,7 @@ export default function NetworthContainer() {
       await API.deleteNetworth(id);
       reload();
     } catch (err) {
-      
+
       console.error("Delete failed:", err);
       toast.error("Failed to delete entry");
     }
@@ -68,22 +68,28 @@ export default function NetworthContainer() {
       <h1 className="text-2xl font-semibold">Networth Tracker</h1>
 
       <MonthSelector month={month} year={year} setMonth={setMonth} setYear={setYear} />
+
       <NetworthTable
         entries={entries}
         accountTypes={accountTypes}
         onUpdate={handleUpdate}
         onDelete={handleDelete}
-        onAdd={(row: any) =>
+        onAdd={(row: any) => {
+          const isSameMonth = new Date(row.snapshotDate).getMonth() + 1 === Number(month);
+          const isSameYear = new Date(row.snapshotDate).getFullYear() === Number(year);
+          console.log("isSameMonth", { isSameMonth }, { isSameYear });
+          console.log(row?.snapshotDate)
           addEntryFn(
             {
               accountType: row.accountType,
               accountName: row.accountName,
               balance: Number(row.balance),
-              snapshotDate: `${year}-${month}-01`,
+              snapshotDate: (isSameMonth && isSameYear) ? row?.snapshotDate : `${year}-${month}-01`,
             },
             toast,
             reload
           )
+        }
         }
       />
     </div>
