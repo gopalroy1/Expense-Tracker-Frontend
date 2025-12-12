@@ -1,53 +1,88 @@
-import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
-
+import ReactECharts from "echarts-for-react";
+import { ChartContainer } from "./chartContainer";
 
 export default function DonutChart({ data, centralSum, onSliceClick }: any) {
+  const total = data.reduce((acc: number, d: any) => acc + d.sliceValue, 0);
+
+  const seriesData = data.map((item: any) => ({
+    name: item.name,
+    value: item.sliceValue,
+    actualValue: item.actualValue,
+    itemStyle: { color: item.color },
+  }));
+
+  const option = {
+    tooltip: {
+      trigger: "item",
+      formatter: (p: any) => {
+        const percent = ((p.value / total) * 100).toFixed(1);
+        return `
+          <strong>${p.name}</strong><br/>
+          Value: ${p.data.actualValue}<br/>
+          Share: ${percent}%
+        `;
+      },
+    },
+
+    legend: {
+      show: true,
+      bottom: 0,
+      type: "scroll",
+    },
+
+   series: [
+  {
+    type: "pie",
+    radius: ["50%", "70%"],
+    avoidLabelOverlap: false,
+    label: {
+      show: true,
+      position: "outside",
+      formatter: (p:any) => {
+        const percent = (p.value / total) * 100;
+        return percent < 1 ? "" : `${p.name}\n${percent.toFixed(1)}%`;
+      },
+      fontSize: 12,
+    },
+    labelLine: {
+      show: true,
+      length: 18,
+      length2: 12,
+    },
+    data: seriesData,
+  }
+],
+
+
+    graphic: [
+      {
+        type: "text",
+        left: "center",
+        top: "center",
+        style: {
+          text: `₹ ${centralSum.toLocaleString("en-IN")}`,
+          fontSize: 20,
+          fontWeight: 600,
+          fill: "#333",
+          textAlign: "center",
+        },
+      },
+    ],
+  };
+
+  function onEvents(params: any) {
+    if (onSliceClick) onSliceClick(params.data);
+  }
+
   return (
-    <PieChart width={'100%'} height={380}>
-      
-      <text
-        x="50%"
-        y="50%"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        style={{ fontSize: "20px", fontWeight: "600" }}
-      >
-        ₹ {centralSum.toLocaleString("en-IN")}
-      </text>
-
-      <Pie
-        data={data}
-        dataKey="sliceValue"
-        nameKey="name"
-        cx="50%"
-        cy="50%"
-        innerRadius={90}
-        outerRadius={130}
-        paddingAngle={2}
-        label={({ index }) => {
-          const item = data[index];
-          return `${item.name}: ${item.actualValue}`;
-        }}
-        labelLine={false}
-      >
-        {data.map((slice: any, i: any) => (
-          <Cell
-            key={i}
-            fill={slice.color}
-            style={{ cursor: onSliceClick ? "pointer" : "default" }}
-            onClick={() => onSliceClick?.(slice)}
-          />
-        ))}
-      </Pie>
-
-      <Tooltip
-        formatter={(_value, _name, props) => {
-          const item = props.payload;
-          return [`${item.actualValue}`, `${item.name}`];
-        }}
+    <ChartContainer>
+      <ReactECharts
+        option={option}
+        style={{ width: "100%", height: "100%" }}
+        notMerge={true}
+        lazyUpdate={true}
+        onEvents={{ click: onEvents }}
       />
-
-      <Legend />
-    </PieChart>
+    </ChartContainer>
   );
 }

@@ -25,19 +25,18 @@ export default function Modal({ open, onClose, title, children }: any) {
       onClick={handleOverlayClick}
     >
       <div
-        className="
-          bg-white 
-          p-6 
-          rounded-2xl 
-          shadow-2xl 
-          w-[95%] 
-          max-w-3xl 
-          max-h-[90vh] 
-          overflow-y-auto
-          relative
-          animate-scaleIn
-        "
-      >
+  className="
+    bg-white 
+    p-6 
+    rounded-2xl 
+    shadow-2xl 
+    w-[95%] 
+    max-w-3xl 
+    max-h-[90vh] 
+    overflow-y-auto
+    relative
+  "
+>
         {/* Close button (X) */}
         <button
           onClick={() => onClose(false)}
