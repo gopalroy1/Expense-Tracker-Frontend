@@ -1,3 +1,4 @@
+import CategoryTrendExplorer from "./categoryTrend";
 import { SnapshotSection } from "./Snapshot";
 import { NetWorthTrendSection } from "./trends/NetWorthTrendSection";
 
@@ -7,6 +8,8 @@ export const DashboardContainer = () => {
             <h1 className="text-2xl font-semibold mb-4">Dashboard</h1>
             <SnapshotSection />
             <NetWorthTrendSection />
+            <div className="p-8"></div>
+            <CategoryTrendExplorer></CategoryTrendExplorer>
         </div>
     );
 };
