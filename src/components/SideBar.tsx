@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { API } from "../api";
 import { MENU_ITEMS } from "../constants/constant";
 import { useApi } from "../hooks/useApi";
@@ -20,9 +20,11 @@ export const Sidebar: React.FC = () => {
       {/* Top */}
       <div>
         {/* Logo */}
+        <Link to="/dashboard">
         <div className="px-6 py-5 text-xl font-semibold tracking-tight">
           <span className="text-blue-400">💸</span> Expense Tracker
         </div>
+        </Link>
 
         {/* Menu */}
         <nav className="px-3 space-y-1">
