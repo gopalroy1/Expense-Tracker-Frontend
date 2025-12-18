@@ -24,18 +24,18 @@ export default function NetworthTable({
   const [newRow, setNewRow] = useState<Partial<NetworthEntry>>({
     accountType: "",
     accountName: "",
-          //@ts-ignore
+    //@ts-ignore
 
     balance: "",
     snapshotDate: getToday(),
   });
   const [showConfirm, setShowConfirm] = useState(false);
-const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
-const askDelete = (id: string) => {
-  setDeleteId(id);
-  setShowConfirm(true);
-};
+  const askDelete = (id: string) => {
+    setDeleteId(id);
+    setShowConfirm(true);
+  };
 
   const getTypeObj = (type: string | undefined) =>
     accountTypes.find((t) => t.type === type);
@@ -75,7 +75,7 @@ const askDelete = (id: string) => {
         balance: payload.balance !== undefined ? Number(payload.balance) : undefined,
         snapshotDate: payload.snapshotDate!,
       });
-      
+
     } catch (error) {
       toast.error("Failed to update entry");
     }
@@ -110,7 +110,7 @@ const askDelete = (id: string) => {
     setNewRow({
       accountType: "",
       accountName: "",
-            //@ts-ignore
+      //@ts-ignore
 
       balance: "",
       snapshotDate: getToday(),
@@ -133,7 +133,7 @@ const askDelete = (id: string) => {
         </thead>
 
         <tbody>
-          { (entries?.length>0 || newRowVisible)? entries.map((row) => {
+          {(entries?.length > 0 || newRowVisible) ? entries.map((row) => {
             const isEditing = editingId === row.id;
             const local = editState[row.id] || {};
 
@@ -146,7 +146,7 @@ const askDelete = (id: string) => {
                       label=""
                       items={accountTypes.map((t) => ({ id: t.id, name: t.type }))}
                       selected={{ name: local.accountType }}
-                            //@ts-ignore
+                      //@ts-ignore
 
                       onSelect={(item) =>
                         setEditState((s) => ({
@@ -158,19 +158,19 @@ const askDelete = (id: string) => {
                           },
                         }))
                       }
-                            //@ts-ignore
+                      //@ts-ignore
 
                       onAdd={async (text) => {
                         await API.addAccountType({ type: text });
                         refreshAccounts();
                       }}
-                            //@ts-ignore
+                      //@ts-ignore
 
                       onUpdate={async (id, text) => {
                         await API.updateType(id, { type: text });
                         refreshAccounts();
                       }}
-                            //@ts-ignore
+                      //@ts-ignore
 
                       onDelete={async (id) => {
                         await API.deleteAccountType(id);
@@ -197,7 +197,7 @@ const askDelete = (id: string) => {
                         name: n.name,
                       }))}
                       selected={{ name: local.accountName }}
-                            //@ts-ignore
+                      //@ts-ignore
 
                       onSelect={(item) =>
                         setEditState((s) => ({
@@ -208,7 +208,7 @@ const askDelete = (id: string) => {
                           },
                         }))
                       }
-                            //@ts-ignore
+                      //@ts-ignore
 
                       onAdd={async (text) => {
                         const typeObj = getTypeObj(local.accountType);
@@ -220,13 +220,13 @@ const askDelete = (id: string) => {
                         });
                         refreshAccounts();
                       }}
-                            //@ts-ignore
+                      //@ts-ignore
 
                       onUpdate={async (id, text) => {
                         await API.updateName(id, { name: text });
                         refreshAccounts();
                       }}
-                            //@ts-ignore
+                      //@ts-ignore
 
                       onDelete={async (id) => {
                         await API.deleteAccountName(id);
@@ -255,7 +255,7 @@ const askDelete = (id: string) => {
                           : String(local.balance)
                       }
                       onChange={(e) =>
-                              //@ts-ignore
+                        //@ts-ignore
 
                         setEditState((s) => ({
                           ...s,
@@ -311,7 +311,7 @@ const askDelete = (id: string) => {
                         onClick={() => {
                           saveEdit(row.id)
                           toast.success("Entry updated");
-                        } 
+                        }
                         }
                         className="text-green-600 font-medium hover:underline"
                       >
@@ -333,9 +333,9 @@ const askDelete = (id: string) => {
                         Edit
                       </button>
                       <button
-                          onClick={() => {
-                            askDelete(row.id);
-                          }}
+                        onClick={() => {
+                          askDelete(row.id);
+                        }}
                         className="text-red-600 hover:underline"
                       >
                         Delete
@@ -345,7 +345,7 @@ const askDelete = (id: string) => {
                 </td>
               </tr>
             );
-          }) :<ImportData></ImportData>
+          }) : <ImportData></ImportData>
           }
 
           {/* New Row */}
@@ -356,7 +356,7 @@ const askDelete = (id: string) => {
                   label=""
                   items={accountTypes.map((t) => ({ id: t.id, name: t.type }))}
                   selected={{ name: newRow.accountType }}
-                        //@ts-ignore
+                  //@ts-ignore
 
                   onSelect={(item) =>
                     setNewRow({
@@ -365,19 +365,19 @@ const askDelete = (id: string) => {
                       accountName: "",
                     })
                   }
-                        //@ts-ignore
+                  //@ts-ignore
 
                   onAdd={async (text) => {
                     await API.addAccountType({ type: text });
                     refreshAccounts();
                   }}
-                        //@ts-ignore
+                  //@ts-ignore
 
                   onUpdate={async (id, text) => {
                     await API.updateType(id, { type: text });
                     refreshAccounts();
                   }}
-                        //@ts-ignore
+                  //@ts-ignore
 
                   onDelete={async (id) => {
                     await API.deleteAccountType(id);
@@ -394,7 +394,7 @@ const askDelete = (id: string) => {
                     name: n.name,
                   }))}
                   selected={{ name: newRow.accountName }}
-                        //@ts-ignore
+                  //@ts-ignore
 
                   onSelect={(item) =>
                     setNewRow({
@@ -402,7 +402,7 @@ const askDelete = (id: string) => {
                       accountName: item.name,
                     })
                   }
-                        //@ts-ignore
+                  //@ts-ignore
 
                   onAdd={async (text) => {
                     const typeObj = getTypeObj(newRow.accountType);
@@ -414,13 +414,13 @@ const askDelete = (id: string) => {
                     });
                     refreshAccounts();
                   }}
-                        //@ts-ignore
+                  //@ts-ignore
 
                   onUpdate={async (id, text) => {
                     await API.updateName(id, { name: text });
                     refreshAccounts();
                   }}
-                        //@ts-ignore
+                  //@ts-ignore
 
                   onDelete={async (id) => {
                     await API.deleteAccountName(id);
@@ -465,7 +465,7 @@ const askDelete = (id: string) => {
                     setNewRow({
                       accountType: "",
                       accountName: "",
-                            //@ts-ignore
+                      //@ts-ignore
                       balance: "",
                       snapshotDate: getToday(),
                     });
@@ -480,14 +480,14 @@ const askDelete = (id: string) => {
         </tbody>
       </table>
 
-<ConfirmModal
-  open={showConfirm}
-  title="Delete Entry"
-  message="Are you sure you want to delete this entry? This action cannot be undone."
-  confirmText="Delete"
-  cancelText="Cancel"
+      <ConfirmModal
+        open={showConfirm}
+        title="Delete Entry"
+        message="Are you sure you want to delete this entry? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
         onConfirm={() => {
-          onDelete(String(deleteId)) 
+          onDelete(String(deleteId))
           toast.success("Entry deleted");
           setShowConfirm(false);
           setDeleteId(null);
@@ -496,9 +496,9 @@ const askDelete = (id: string) => {
           setShowConfirm(false)
           setDeleteId(null);
         }
-    
-  }
-/>
+
+        }
+      />
 
       {!newRowVisible && (
         <div className="mt-4">

@@ -1,6 +1,7 @@
 import React from "react";
 import { DemoCategoryTrendSection } from "./demoCategoryTrendSection";
 import DemoLayout from "./demoLayout";
+import DemoNetworthContainer from "./DemoNetworthContainer";
 import { DemoNetWorthTrendSection } from "./demoNetworthTrendSection";
 import { DemoSnapshotSection } from "./DemoSnapshotSection";
 
@@ -79,6 +80,9 @@ export const DemoDashboard: React.FC = () => {
           Create an account to track your real finances.
         </div>
 
+        <div className="bg-white rounded-2xl border shadow-sm p-6">
+          <DemoNetworthContainer />
+        </div>
         <div className="bg-white rounded-2xl border shadow-sm p-6">
           <DemoSnapshotSection />
         </div>
