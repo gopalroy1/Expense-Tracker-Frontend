@@ -6,15 +6,16 @@ import { Sidebar } from "../../components/SideBar";
 
 export const AppLayout: React.FC = () => {
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar on the left */}
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Sidebar />
 
-      {/* Right section: navbar + content */}
       <div className="flex flex-col flex-1">
         <Navbar />
-        <main className="flex-1 overflow-y-auto p-6">
-          <Outlet />
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-[1400px] mx-auto px-6 py-6">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

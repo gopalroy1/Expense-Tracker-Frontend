@@ -1,3 +1,4 @@
+import { DemoDashboard } from "@/pages/demo/demoDashboard";
 import { Route, Routes } from "react-router-dom";
 import AccountManager from "../pages/AccountManger";
 import { DashboardPage } from "../pages/DashboardPage";
@@ -18,6 +19,8 @@ export default function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/test" element={<h1>Test Route ✅</h1>} />
+      <Route path="/demo" element={<DemoDashboard />} />
+
 
       {/* Protected routes */}
       <Route element={<ProtectedRoute />}>
