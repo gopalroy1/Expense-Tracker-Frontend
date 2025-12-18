@@ -48,6 +48,7 @@ const LoginPage: React.FC = () => {
       toast.success("Login successful");
       console.log("Login successful:", data.data.user);
       dispatch(loginSuccess({ user: data.data.user }));
+      localStorage.setItem("user", JSON.stringify(data.data.user));
       console.log("The token saving in local storage",data.data.token)
       localStorage.setItem("token", data.data.token);
       console.log("Navigating to dashboard...");

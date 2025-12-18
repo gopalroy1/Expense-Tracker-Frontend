@@ -1,277 +1,123 @@
+
 import { API } from "@/api";
 import axiosInstance from "@/api/axios/axiosInstane";
 import { useApi } from "@/hooks/useApi";
 import { setAccounts } from "@/store/accountSlice";
-import ReactECharts from "echarts-for-react";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
+import { CategoryTrendView } from "./categoryTrendView";
 
-/* ---------------- Types ---------------- */
-
-type CategoryTrendResponse = {
-  year: number;
-  defaultCategory: string;
-  months: number[];
-  labels: string[];
-  categoryTrend: number[];
-  subCategoryTrend: Record<string, number[]>;
-};
-
-/* ---------------- Component ---------------- */
-
-export default function CategoryTrendExplorer() {
-  const [data, setData] = useState<CategoryTrendResponse | null>(null);
+export const CategoryTrendExplorer = () => {
+  const [rawData, setRawData] = useState<any>(null);
   const [category, setCategory] = useState<string | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [range, setRange] = useState<6 | 12 | "ALL">("ALL");
   const [view, setView] = useState<"CATEGORY" | "SUB_CATEGORY">("CATEGORY");
-    const [loading, setLoading] = useState<boolean>(true);
-        const dispatch = useDispatch();
-            const { callApi } = useApi();
-        
+  const [loading, setLoading] = useState(true);
 
-        const { accountTypes, loading:loadingCategory } = useSelector((s: any) => s.account || {});
-console.log({accountTypes})
+  const dispatch = useDispatch();
+  const { callApi } = useApi();
+  const { accountTypes } = useSelector((s: any) => s.account || {});
 
-  /* ---------------- Fetch ---------------- */
+  /* ---------------- Load account types ---------------- */
 
-  const fetchData = async (
-    selectedCategory?: string,
-    selectedYear?: number
-  ) => {
+  useEffect(() => {
+    callApi(() => API.getAccounts())
+      .then((res) => dispatch(setAccounts(res.accountTypes ?? [])))
+      .catch((e) => toast.error(e?.message || "Failed to load categories"));
+  }, []);
+
+  /* ---------------- Fetch category trend ---------------- */
+
+  const fetchData = async (c?: string, y?: number) => {
     setLoading(true);
+    const res = await axiosInstance.get("/api/dashboard/category-trend", {
+      params: { category: c, year: y },
+    });
 
-    const res = await axiosInstance.get<CategoryTrendResponse>(
-      "/api/dashboard/category-trend",
-      {
-        params: {
-          category: selectedCategory,
-          year: selectedYear,
-        },
-      }
-    );
-
-    setData(res.data);
+    setRawData(res.data);
     setCategory(res.data.defaultCategory);
     setYear(res.data.year);
     setView("CATEGORY");
     setLoading(false);
   };
-        // helper: load into redux
-    const load = async () => {
-        try {
-            // dispatch(setLoading(true));
-
-            const res = await callApi(() => API.getAccounts());
-
-            // Correct shape
-            const types = res.accountTypes ?? [];
-
-            dispatch(setAccounts(types));  // <-- FIXED
-
-            // Open all by default
-            // setOpenType((prev) => {
-            //     const next: Record<string, boolean> = {};
-            //     types.forEach((t: any) => (next[t.id] = prev[t.id] ?? true));
-            //     return next;
-            // });
-
-        } catch (err: any) {
-            toast.error(err?.message || "Failed to load accounts");
-        } finally {
-            // dispatch(setLoading(false));
-        }
-    };
-
 
   useEffect(() => {
-      fetchData();
-      load()
+    fetchData();
   }, []);
 
-  /* ---------------- Derived (range filter) ---------------- */
+  /* ---------------- Apply range filter ---------------- */
 
-  const slicedData = useMemo(() => {
-    if (!data || range === "ALL") return data;
+  const data: any = useMemo(() => {
+    if (!rawData) return null;
 
-    const start = Math.max(0, data.labels.length - range);
+    if (range === "ALL") {
+      return {
+        year: rawData.year,
+        category,
+        labels: rawData.labels,
+        categoryTrend: rawData.categoryTrend,
+        subCategoryTrend: rawData.subCategoryTrend,
+      };
+    }
+
+    const start = Math.max(0, rawData.labels.length - range);
 
     return {
-      ...data,
-      labels: data.labels.slice(start),
-      categoryTrend: data.categoryTrend.slice(start),
+      year: rawData.year,
+      category,
+      labels: rawData.labels.slice(start),
+      categoryTrend: rawData.categoryTrend.slice(start),
       subCategoryTrend: Object.fromEntries(
-        Object.entries(data.subCategoryTrend).map(([k, v]) => [
+        Object.entries(rawData.subCategoryTrend).map(([k, v]:any) => [
           k,
           v.slice(start),
         ])
       ),
     };
-  }, [data, range]);
+  }, [rawData, range, category]);
 
-  if (loading) return <div className="p-4">Loading trend…</div>;
-  if (!slicedData) return null;
-
-  /* ---------------- Chart Options ---------------- */
-
-  const categoryOption = {
-    tooltip: {
-      trigger: "axis",
-      valueFormatter: (v: number) => `₹ ${v.toLocaleString()}`,
-    },
-    grid: { left: 12, right: 12, bottom: 24, containLabel: true },
-    xAxis: {
-      type: "category",
-      data: slicedData.labels,
-      axisTick: { show: false },
-      axisLine: { show: false },
-    },
-    yAxis: {
-      type: "value",
-      axisLabel: {
-        formatter: (v: number) => `₹${(v / 1000).toFixed(0)}k`,
-      },
-      splitLine: {
-        lineStyle: { type: "dashed", opacity: 0.3 },
-      },
-    },
-    series: [
-      {
-        type: "line",
-        smooth: true,
-        symbolSize: 6,
-        lineStyle: { width: 3 },
-        areaStyle: { opacity: 0.25 },
-        data: slicedData.categoryTrend,
-      },
-    ],
-  };
-
-  const subCategoryOption = {
-    tooltip: {
-      trigger: "axis",
-      valueFormatter: (v: number) => `₹ ${v.toLocaleString()}`,
-    },
-    legend: {
-      top: 0,
-      icon: "circle",
-    },
-    grid: { left: 12, right: 12, bottom: 24, containLabel: true },
-    xAxis: {
-      type: "category",
-      data: slicedData.labels,
-    },
-    yAxis: {
-      type: "value",
-      splitLine: {
-        lineStyle: { type: "dashed", opacity: 0.3 },
-      },
-    },
-    series: Object.entries(slicedData.subCategoryTrend).map(
-      ([name, values]) => ({
-        name,
-        type: "line",
-        smooth: true,
-        symbolSize: 5,
-        data: values,
-      })
-    ),
-  };
-
-  /* ---------------- Render ---------------- */
+  if (loading) return <div className="text-sm text-gray-500">Loading…</div>;
+  if (!data || !year) return null;
 
   return (
-    <div className="rounded-xl border bg-white p-4 space-y-3">
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h3 className="text-lg font-semibold">Category Trend</h3>
-          <p className="text-sm text-gray-500">
-            {year} • {category}
-          </p>
-        </div>
+    <div className="bg-white rounded-2xl border shadow-sm p-6 space-y-4">
+      {/* Controls */}
+      <div className="flex gap-2">
+        <select
+          value={category ?? ""}
+          onChange={(e) => fetchData(e.target.value, year)}
+          className="border rounded px-2 py-1 text-sm"
+        >
+          {accountTypes?.map((c: any) => (
+            <option key={c.type} value={c.type}>
+              {c.type}
+            </option>
+          ))}
+        </select>
 
-        {/* Controls */}
-        <div className="flex flex-wrap gap-2 items-center">
-          {/* Category */}
-          <select
-            value={category ?? ""}
-            onChange={(e) => fetchData(e.target.value, year ?? undefined)}
-            className="border rounded px-2 py-1 text-sm"
-          >
-            { !loadingCategory&& accountTypes&& accountTypes?.map((c: any) => (
-              <option key={c.type+"sldf"} value={c.type}>
-                {c.type}
-              </option>
-            ))}
-          </select>
-
-          {/* Year */}
-          <select
-            value={year ?? ""}
-            onChange={(e) => fetchData(category ?? undefined, Number(e.target.value))}
-            className="border rounded px-2 py-1 text-sm"
-          >
-            {[2025, 2024, 2023].map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </select>
-
-          {/* Range */}
-          <div className="flex gap-1">
-            {[6, 12, "ALL"].map((r) => (
-              <button
-                key={r}
-                onClick={() => setRange(r as any)}
-                className={`px-2 py-1 text-xs rounded border ${
-                  range === r ? "bg-black text-white" : ""
-                }`}
-              >
-                {r === "ALL" ? "All" : `Last ${r}M`}
-              </button>
-            ))}
-          </div>
-
-          {view === "CATEGORY" && (
-            <button
-              onClick={() => setView("SUB_CATEGORY")}
-              className="border rounded px-2 py-1 text-sm"
-            >
-              View breakdown
-            </button>
-          )}
-        </div>
+        <select
+          value={year}
+          onChange={(e) => fetchData(category!, Number(e.target.value))}
+          className="border rounded px-2 py-1 text-sm"
+        >
+          {[year - 2, year - 1, year, year + 1].map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* Charts */}
-      {view === "CATEGORY" && (
-        <ReactECharts
-          option={categoryOption}
-          style={{ height: 320 }}
-          onEvents={{
-            click: () => setView("SUB_CATEGORY"),
-          }}
-        />
-      )}
-
-      {view === "SUB_CATEGORY" && (
-        <>
-          <button
-            onClick={() => setView("CATEGORY")}
-            className="text-sm text-blue-600"
-          >
-            ← Back to category
-          </button>
-
-          <ReactECharts
-            option={subCategoryOption}
-            style={{ height: 360 }}
-          />
-        </>
-      )}
+      {/* View */}
+      <CategoryTrendView
+        data={data}
+        view={view}
+        range={range}
+        onRangeChange={setRange}
+        onViewChange={setView}
+      />
     </div>
   );
-}
+};

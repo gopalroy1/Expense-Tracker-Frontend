@@ -1,5 +1,7 @@
 import React from "react";
+import { DemoCategoryTrendSection } from "./demoCategoryTrendSection";
 import DemoLayout from "./demoLayout";
+import { DemoNetWorthTrendSection } from "./demoNetworthTrendSection";
 import { DemoSnapshotSection } from "./DemoSnapshotSection";
 
 /* ---------------- Fake Demo Data ---------------- */
@@ -79,6 +81,12 @@ export const DemoDashboard: React.FC = () => {
 
         <div className="bg-white rounded-2xl border shadow-sm p-6">
           <DemoSnapshotSection />
+        </div>
+        <div className="bg-white rounded-2xl border shadow-sm p-6">
+          <DemoNetWorthTrendSection />
+        </div>
+        <div className="bg-white rounded-2xl border shadow-sm p-6">
+          <DemoCategoryTrendSection />
         </div>
       </div>
     </DemoLayout>

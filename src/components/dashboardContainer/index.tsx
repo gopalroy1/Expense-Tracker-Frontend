@@ -1,4 +1,4 @@
-import CategoryTrendExplorer from "./categoryTrend";
+import { CategoryTrendExplorer } from "./categoryTrend";
 import { SnapshotSection } from "./Snapshot";
 import { NetWorthTrendSection } from "./trends/NetWorthTrendSection";
 
