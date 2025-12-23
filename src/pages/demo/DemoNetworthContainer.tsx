@@ -68,7 +68,7 @@ export default function DemoNetworthContainer() {
   const [month, setMonth] = useState("11");
   const [year, setYear] = useState("2025");
 
-  const [entries, setEntries] = useState(DEMO_ENTRIES);
+  const [entries ] = useState(DEMO_ENTRIES);
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
