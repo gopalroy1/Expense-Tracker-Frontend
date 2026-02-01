@@ -50,7 +50,7 @@ const DemoLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               </Link>
 
               <Link
-                to="/register"
+                to="/signup"
                 className="px-4 py-1.5 rounded-md bg-blue-600 text-white text-sm hover:bg-blue-700 transition"
               >
                 Create Account
