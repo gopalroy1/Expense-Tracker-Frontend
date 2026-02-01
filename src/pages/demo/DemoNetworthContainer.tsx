@@ -89,8 +89,7 @@ export default function DemoNetworthContainer() {
 
       <NetworthTable
         entries={entries}
-        accountTypes={DEMO_ACCOUNT_TYPES}
-        onUpdate={() => {}}
+        onUpdate={() => { }}
         onDelete={() => {}}
         onAdd={() => {}}
       />
