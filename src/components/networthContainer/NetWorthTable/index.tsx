@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { API } from "../../../api";
 import ConfirmModal from "../../common/ConfirmModal";
+import { loadAccountsFn } from "../functions/getAllData";
 import EditableDropdown from "./editableDropdown";
 import { formatCurrency, getToday, normalizeDate } from "./helper";
 import ImportData from "./ImportData";
@@ -10,12 +11,13 @@ import type { NetworthEntry, PropsNetworthTable } from "./type";
 
 export default function NetworthTable({
   entries,
-  accountTypes,
   onUpdate,
   onDelete,
   onAdd,
 }: PropsNetworthTable) {
   const dispatch = useDispatch();
+    const { accountTypes } = useSelector((s: any) => s.account);
+
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editState, setEditState] = useState<Record<string, Partial<NetworthEntry>>>({});
@@ -38,7 +40,7 @@ export default function NetworthTable({
   };
 
   const getTypeObj = (type: string | undefined) =>
-    accountTypes.find((t) => t.type === type);
+    accountTypes.find((t:any) => t.type === type);
 
   const getNamesFor = (type: string | undefined) =>
     getTypeObj(type)?.accountNames || [];
@@ -85,9 +87,9 @@ export default function NetworthTable({
 
   const refreshAccounts = async () => {
     try {
-      //@ts-ignore
-      await loadAccountsFn(dispatch, setAccounts);
+      await loadAccountsFn(dispatch);
     } catch (err) {
+      console.error(err)
       toast.error("Unable to refresh accounts");
     }
   };
@@ -144,7 +146,7 @@ export default function NetworthTable({
                   {isEditing ? (
                     <EditableDropdown
                       label=""
-                      items={accountTypes.map((t) => ({ id: t.id, name: t.type }))}
+                      items={accountTypes.map((t:any) => ({ id: t.id, name: t.type }))}
                       selected={{ name: local.accountType }}
                       //@ts-ignore
 
@@ -192,7 +194,7 @@ export default function NetworthTable({
                   {isEditing ? (
                     <EditableDropdown
                       label=""
-                      items={getNamesFor(local.accountType).map((n) => ({
+                      items={getNamesFor(local.accountType).map((n:any) => ({
                         id: n.id,
                         name: n.name,
                       }))}
@@ -354,7 +356,7 @@ export default function NetworthTable({
               <td className="p-3">
                 <EditableDropdown
                   label=""
-                  items={accountTypes.map((t) => ({ id: t.id, name: t.type }))}
+                  items={accountTypes? accountTypes.map((t:any) => ({ id: t.id, name: t.type })):[]}
                   selected={{ name: newRow.accountType }}
                   //@ts-ignore
 
@@ -389,7 +391,7 @@ export default function NetworthTable({
               <td className="p-3">
                 <EditableDropdown
                   label=""
-                  items={getNamesFor(newRow.accountType).map((n) => ({
+                  items={getNamesFor(newRow.accountType).map((n:any) => ({
                     id: n.id,
                     name: n.name,
                   }))}

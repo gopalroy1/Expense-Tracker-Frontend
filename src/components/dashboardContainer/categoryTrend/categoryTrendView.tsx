@@ -85,92 +85,95 @@ export const CategoryTrendView: React.FC<Props> = ({
   return (
     <div className="space-y-3">
       {/* Header */}
-     {/* Header */}
-<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-  <div>
-    <h3 className="text-lg font-semibold">Category Trend</h3>
-    <p className="text-sm text-gray-500">
-      {data.year} • {data.category}
-    </p>
-    <p className="text-xs text-gray-400 mt-1">
-      Track how this category changes over time. Click view breakdown to explore deeper.
-    </p>
-  </div>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div>
+          <h3 className="text-lg font-semibold">Category Trend</h3>
+          <p className="text-sm text-gray-500">
+            {data.year} • {data.category}
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Track how this category changes over time. Click view breakdown to explore deeper.
+          </p>
+        </div>
 
-  <div className="flex items-center gap-2">
-    {/* Range */}
-    <div className="flex gap-1">
-      {[6, 12, "ALL"].map((r) => (
-        <button
-          key={r}
-          onClick={() => onRangeChange(r as any)}
-          className={`px-2 py-1 text-xs rounded border transition ${
-            range === r
-              ? "bg-black text-white"
-              : "hover:bg-gray-100"
-          }`}
-        >
-          {r === "ALL" ? "All" : `Last ${r}M`}
-        </button>
-      ))}
-    </div>
+        <div className="flex items-center gap-2">
+          {/* Range */}
+          <div className="flex gap-1">
+            {[6, 12, "ALL"].map((r) => (
+              <button
+                key={r}
+                onClick={() => onRangeChange(r as any)}
+                className={`px-2 py-1 text-xs rounded border transition ${range === r
+                    ? "bg-black text-white"
+                    : "hover:bg-gray-100"
+                  }`}
+              >
+                {r === "ALL" ? "All" : `Last ${r}M`}
+              </button>
+            ))}
+          </div>
 
-    {/* Explicit drill-down CTA */}
-    {view === "CATEGORY" && (
-      <button
-        onClick={() => onViewChange("SUB_CATEGORY")}
-        className="px-2 py-1 text-xs border rounded hover:bg-gray-100"
-      >
-        View breakdown →
-      </button>
-    )}
-  </div>
-</div>
+          {/* Explicit drill-down CTA */}
+          {view === "CATEGORY" && (
+            <button
+              onClick={() => onViewChange("SUB_CATEGORY")}
+              className="px-2 py-1 text-xs border rounded hover:bg-gray-100"
+            >
+              View breakdown →
+            </button>
+          )}
+        </div>
+      </div>
 
 
       {/* Charts */}
-     {view === "CATEGORY" && (
-  <div className="relative group">
-    <ReactECharts
-      option={categoryOption}
-      style={{ height: 320, cursor: "pointer" }}
-      onEvents={{
-        click: () => onViewChange("SUB_CATEGORY"),
-      }}
-    />
-
-    {/* Hover hint */}
-    <div className="absolute bottom-2 right-2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition">
-      Click view breakdown to explore sub-categories →
-    </div>
-  </div>
-)}
+      {view === "CATEGORY" && (
+        <div className="relative group">
+          {(data && data?.categoryTrend && data?.categoryTrend?.length > 0) ?
+            <ReactECharts
+              option={categoryOption}
+              style={{ height: 320, cursor: "pointer" }}
+              onEvents={{
+                click: () => onViewChange("SUB_CATEGORY"),
+              }}
+            /> : <p>No data found for this category</p>
+          }
 
 
-    {view === "SUB_CATEGORY" && (
-  <>
-    <div className="flex items-center justify-between">
-      <button
-        onClick={() => onViewChange("CATEGORY")}
-        className="text-sm text-blue-600 hover:underline"
-      >
-        ← Back to category view
-      </button>
+          {/* Hover hint */}
+          <div className="absolute bottom-2 right-2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition">
+            Click view breakdown to explore sub-categories →
+          </div>
+        </div>
+      )}
 
-      <p className="text-xs text-gray-400">
-        Breakdown of {data.category}
+
+      {view === "SUB_CATEGORY" && (
+        <>
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => onViewChange("CATEGORY")}
+              className="text-sm text-blue-600 hover:underline"
+            >
+              ← Back to category view
+            </button>
+
+            <p className="text-xs text-gray-400">
+              Breakdown of {data.category}
+            </p>
+          </div>
+
+          < ReactECharts
+            option={subCategoryOption}
+            style={{ height: 360 }}
+          />
+
+        </>
+      )}
+      <p className="text-xs text-gray-400 mt-2">
+        Tip: Click view breakdown to understand which sub-categories are driving changes.
       </p>
-    </div>
-
-    <ReactECharts
-      option={subCategoryOption}
-      style={{ height: 360 }}
-    />
-  </>
-          )}
-          <p className="text-xs text-gray-400 mt-2">
-  Tip: Click view breakdown to understand which sub-categories are driving changes.
-</p>
 
 
     </div>

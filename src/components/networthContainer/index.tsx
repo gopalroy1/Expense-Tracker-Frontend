@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 
 // import AddEntryForm from "./AddEntryForm";
@@ -16,7 +16,6 @@ import NetworthTable from "./NetWorthTable";
 
 export default function NetworthContainer() {
   const dispatch = useDispatch();
-  const { accountTypes } = useSelector((s: any) => s.account);
 
   const [month, setMonth] = useState(String(new Date().getMonth() + 1).padStart(2, "0"));
   const [year, setYear] = useState(String(new Date().getFullYear()));
@@ -68,12 +67,13 @@ export default function NetworthContainer() {
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Networth Tracker</h1>
-
+      <p className="text-sm text-gray-500 mt-1">
+  Tip: Enter liabilities using negative (−) values.
+</p>
       <MonthSelector month={month} year={year} setMonth={setMonth} setYear={setYear} />
 
       <NetworthTable
-        entries={entries}
-        accountTypes={accountTypes}
+        entries={entries}        
         onUpdate={handleUpdate}
         onDelete={handleDelete}
         onAdd={(row: any) => {

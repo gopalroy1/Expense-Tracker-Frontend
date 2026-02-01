@@ -19,7 +19,6 @@ export interface NetworthEntry {
 
 export interface PropsNetworthTable {
   entries: NetworthEntry[];
-  accountTypes: AccountType[];
   onUpdate: (id: string, fields: Partial<NetworthEntry>) => Promise<void> | void;
   onDelete: (id: string) => Promise<void> | void;
   onAdd: (row: Omit<NetworthEntry, "id">) => Promise<void> | void;

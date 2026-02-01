@@ -78,6 +78,8 @@ export default function ImportData() {
           Import
         </button>
       </div>
+            <p> If no previous data present then please click add entries</p>
+
 
       {/* Confirmation Modal */}
       <ConfirmModal
