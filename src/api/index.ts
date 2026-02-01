@@ -17,7 +17,10 @@ export const API = {
 
   // Accounts
   getAccounts: () =>
-    axiosInstance.get("/api/account/getall").then((res) => res.data),
+    axiosInstance.get("/api/account/getall").then((res) => res.data).catch((error) => {
+      console.error("Failed to fetch accounts:", error);
+      throw error;
+    }),
 
   addAccountType: (body: { type: string }) =>
     axiosInstance.post("/api/account/addaccount", body).then((res) => res.data),

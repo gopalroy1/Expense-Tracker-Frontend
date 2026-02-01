@@ -44,7 +44,7 @@ const LoginPage: React.FC = () => {
 
     // 2. API call only if validation passes
     try {
-      const data = await callApi(() => API.login(form));
+      const data = await callApi(() => API.login(form))
       toast.success("Login successful");
       console.log("Login successful:", data.data.user);
       dispatch(loginSuccess({ user: data.data.user }));

@@ -18,13 +18,19 @@ export const NetWorthTrendSection: React.FC = () => {
   const fetchTrend = async (y?: number) => {
     const params: any = {};
     if (y) params.year = y;
+    let res:any
 
-    const res = await axiosInstance.get<TrendApiResponse>(
-      "/api/dashboard/networth-trend",
-      { params }
-    );
+    try {
+       res = await axiosInstance.get<TrendApiResponse>(
+        "/api/dashboard/networth-trend",
+        { params }
+      );
+      return res.data;
+    } catch (error) {
+      console.error("Failed to fetch net worth trend:", error);
+      throw error
+    }
 
-    return res.data;
   };
 
   useEffect(() => {
@@ -32,7 +38,7 @@ export const NetWorthTrendSection: React.FC = () => {
       .then((res) => {
         setYear(res.year);
         setData(res.data);
-      })
+      }).catch((error)=>{console.error(error)})
       .finally(() => setLoading(false));
   }, []);
 
@@ -42,6 +48,7 @@ export const NetWorthTrendSection: React.FC = () => {
     setLoading(true);
     fetchTrend(year)
       .then((res) => setData(res.data))
+      .catch((error)=>{console.error(error)})
       .finally(() => setLoading(false));
   }, [year]);
 

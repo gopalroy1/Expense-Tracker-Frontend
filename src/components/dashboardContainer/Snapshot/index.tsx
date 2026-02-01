@@ -14,9 +14,14 @@ import { SnapshotView } from "./SnapshotView";
     params.year = year;
     params.month = month;
   }
-
-  const res = await axiosInstance.get("/api/dashboard/snapshot", { params });
-  return res.data;
+     let res:any
+     try {
+      
+        res = await axiosInstance.get("/api/dashboard/snapshot", { params });
+       return res.data;
+     } catch (error) {
+      console.error("Failed to fetch monthly snapshot:", error);
+     }
 };
 
 

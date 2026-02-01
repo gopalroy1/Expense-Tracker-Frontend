@@ -32,10 +32,18 @@ export const CategoryTrendExplorer = () => {
 
   const fetchData = async (c?: string, y?: number) => {
     setLoading(true);
-    const res = await axiosInstance.get("/api/dashboard/category-trend", {
-      params: { category: c, year: y },
-    });
-
+    let res:any
+    try {
+      res= await axiosInstance.get("/api/dashboard/category-trend", {
+        params: { category: c, year: y },
+      });
+      
+    } catch (error) {
+      console.error("Failed to fetch category trend:", error);
+    }
+    if(!res || !res.data){
+        return
+      }
     setRawData(res.data);
     setCategory(res.data.defaultCategory);
     setYear(res.data.year);
