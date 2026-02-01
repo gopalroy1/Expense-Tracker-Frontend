@@ -1,13 +1,16 @@
+import { loginSuccess } from "@/store/authSlice";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { API } from "../api";
 import { useApi } from "../hooks/useApi";
-import { setAuthData } from "../utils/setAuth";
 import { signupSchema } from "../validation/signUpSchema";
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
+    const dispatch = useDispatch();
+  
   const { callApi, loading, error } = useApi();
 
   const [form, setForm] = useState({
@@ -54,7 +57,13 @@ if (!result.success) {
     try {
       const data = await callApi(() => API.signup(form));
       toast.success("Signup successful");
-      setAuthData(data.token, data.user);
+      // setAuthData(data.token, data.user);
+            dispatch(loginSuccess({ user: data.data.user }));
+            localStorage.setItem("user", JSON.stringify(data.data.user));
+            console.log("The token saving in local storage",data.data.token)
+            localStorage.setItem("token", data.data.token);
+            console.log("Navigating to dashboard...");
+            navigate("/dashboard");
       navigate("/dashboard");
     } catch {
       toast.error("Signup failed");
@@ -130,6 +139,9 @@ if (!result.success) {
           </div>
 
           {/* Other fields (no heavy validation) */}
+          <div className="col-span-2 text-xs text-gray-400 text-center py-2">
+  Optional details (can be added later)
+</div>
 
           <input
             name="city"

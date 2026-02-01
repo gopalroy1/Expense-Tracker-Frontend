@@ -1,4 +1,5 @@
 import { DemoDashboard } from "@/pages/demo/demoDashboard";
+import NotFound from "@/pages/NotFound";
 import { Route, Routes } from "react-router-dom";
 import AccountManager from "../pages/AccountManger";
 import { DashboardPage } from "../pages/DashboardPage";
@@ -30,6 +31,8 @@ export default function AppRoutes() {
           <Route path="accountmanagement" element={<AccountManager />} />
         </Route>
       </Route>
+      <Route path="*" element={<NotFound/>} />
+
     </Routes>
   );
 }

@@ -13,7 +13,7 @@ interface AuthState {
 
 // Load from localStorage on refresh
 const initialState: AuthState = {
-  user: localStorage.getItem("user")
+  user: (localStorage.getItem("user") && localStorage.getItem("user")!='undefined')
     ? JSON.parse(localStorage.getItem("user")!)
     : null,
 };
