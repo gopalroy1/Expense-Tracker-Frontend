@@ -25,7 +25,7 @@ export default function ImportData() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
+    <div className="w-full mt-12p p-12 bg-white rounded-lg shadow border border-gray-200">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800">Import Month Data</h2>
 
       {/* Horizontal Form */}
@@ -78,7 +78,7 @@ export default function ImportData() {
           Import
         </button>
       </div>
-            <p> If no previous data present then please click add entries</p>
+      <p> If no previous data present then please click add entries</p>
 
 
       {/* Confirmation Modal */}
