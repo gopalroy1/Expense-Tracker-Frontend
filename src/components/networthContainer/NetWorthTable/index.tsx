@@ -120,12 +120,12 @@ export default function NetworthTable({
 
     setNewRowVisible(false);
   };
-
+  console.log({entries})
   return (
     <div>
       <table className="w-full mt-6 bg-white rounded-lg shadow border border-gray-200">
         {(entries?.length > 0 || newRowVisible) ?  
-          <thead>
+          (<thead>
           <tr className="bg-gray-50 border-b border-gray-200 text-gray-700">
             <th className="p-3 text-left font-medium">Account Type</th>
             <th className="p-3 text-left font-medium">Account Name</th>
@@ -133,7 +133,7 @@ export default function NetworthTable({
             <th className="p-3 text-left font-medium">Date</th>
             <th className="p-3 text-left font-medium w-32">Actions</th>
           </tr>
-        </thead>
+        </thead>)
          : null}
 
         
