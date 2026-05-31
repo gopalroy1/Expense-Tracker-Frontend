@@ -1,37 +1,37 @@
-import { Outlet } from "react-router-dom";
+import { API } from "@/api";
+import { useApi } from "@/hooks/useApi";
+import { loginSuccess, logout } from "@/store/authSlice";
+import type { RootState } from "@/store";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, Outlet } from "react-router-dom";
+import Loader from "@/components/common/Loader";
 
 const ProtectedRoute = () => {
-  // const dispatch = useDispatch();
-  // //@ts-ignore
-  // const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const { callApi } = useApi();
+  const [initializing, setInitializing] = useState(!user);
 
-  // const { callApi } = useApi();
+  useEffect(() => {
+    if (user) return;
 
-  // const [initializing, setInitializing] = useState(true);  
-  // // <-- THIS FIXES YOUR BUG
+    const check = async () => {
+      try {
+        const data = await callApi(() => API.isLoggedIn());
+        dispatch(loginSuccess({ user: data.data.user }));
+      } catch {
+        dispatch(logout());
+      }
+      setInitializing(false);
+    };
 
-  // useEffect(() => {
-  //   const check = async () => {
-  //     try {
-  //       const data = await callApi(() => API.isLoggedIn());
-  //       dispatch(loginSuccess({ user: data.data.user }));
-  //     } catch {
-  //       dispatch(logout());
-  //     }
-  //     setInitializing(false); // <-- let component know check is done
-  //   };
+    check();
+  }, []);
 
-  //   if (!user) {
-  //     check();
-  //   } else {
-  //     setInitializing(false);
-  //   }
-  // }, []);
+  if (initializing) return <Loader />;
 
-  // // 🔥 FIX: do NOT redirect while initializing
-  // if (initializing) return <Loader />;
-
-  // if (!user) return <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />;
 
   return <Outlet />;
 };

@@ -1,5 +1,9 @@
 import { Home, SquareDashedMousePointer, Wallet } from "lucide-react";
 
+export const googleSignIn = () => {
+  window.open("http://localhost:3000/api/auth/google", "_self");
+};
+
 export const MENU_ITEMS = [
   { name: "Dashboard", icon: Home, path: "/dashboard" },
   { name: "Net Worth", icon: Wallet, path: "/networth" },

@@ -6,6 +6,7 @@ export const API_URL = {
   LOGIN: `/api/auth/login`,
   LOG_OUT: `/api/auth/logout`,
   IS_LOGGED_IN: `/api/auth/isloggedin`,
+  GOOGLE_AUTH: `/api/auth/google`,
 };
 
 export const API = {
