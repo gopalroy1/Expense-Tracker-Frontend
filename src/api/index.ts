@@ -1,35 +1,64 @@
 import axiosInstance from "./axios/axiosInstane";
 
-
 export const API_URL = {
+  // Auth
   SIGN_UP: `/api/auth/signup`,
   LOGIN: `/api/auth/login`,
   LOG_OUT: `/api/auth/logout`,
   IS_LOGGED_IN: `/api/auth/isloggedin`,
   GOOGLE_AUTH: `/api/auth/google`,
-};
-
-export const API = {
-  // Auth
-  signup: (data: any) => axiosInstance.post(API_URL.SIGN_UP, data),
-  login: (data: any) => axiosInstance.post(API_URL.LOGIN, data,{withCredentials:true}),
-  logout: () => axiosInstance.post(API_URL.LOG_OUT),
-  isLoggedIn: () => axiosInstance.get(API_URL.IS_LOGGED_IN),
 
   // Accounts
+  GET_ACCOUNTS: `/api/account/getall`,
+  ADD_ACCOUNT_TYPE: `/api/account/addaccount`,
+  ADD_ACCOUNT_NAME: `/api/account/addaccountname`,
+
+  // Net Worth
+  GET_NETWORTH_BY_MONTH: (month: number, year: number) =>
+    `/api/networth/getmonth?month=${month}&year=${year}`,
+  ADD_NETWORTH: `/api/networth/add`,
+  UPDATE_NETWORTH: (id: string) => `/api/networth/update/${id}`,
+  DELETE_NETWORTH: (id: string) => `/api/networth/delete/${id}`,
+  IMPORT_NETWORTH: `/api/networth/import`,
+
+  // Admin
+  ADMIN_USERS: `/api/admin/users`,
+  ADMIN_EMAILS: (userId: string) => `/api/admin/emails/${userId}`,
+  ADMIN_TRANSACTIONS: (userId: string) => `/api/admin/transactions/${userId}`,
+};
+
+function buildQuery(params: Record<string, string | undefined>) {
+  const q = new URLSearchParams();
+  for (const [key, val] of Object.entries(params)) {
+    if (val) q.set(key, val);
+  }
+  const str = q.toString();
+  return str ? `?${str}` : "";
+}
+
+export const API = {
+  // ── Auth ──────────────────────────────────────────────────────────────────
+  signup: (data: unknown) =>
+    axiosInstance.post(API_URL.SIGN_UP, data),
+
+  login: (data: unknown) =>
+    axiosInstance.post(API_URL.LOGIN, data, { withCredentials: true }),
+
+  logout: () =>
+    axiosInstance.post(API_URL.LOG_OUT),
+
+  isLoggedIn: () =>
+    axiosInstance.get(API_URL.IS_LOGGED_IN),
+
+  // ── Accounts ──────────────────────────────────────────────────────────────
   getAccounts: () =>
-    axiosInstance.get("/api/account/getall").then((res) => res.data).catch((error) => {
-      console.error("Failed to fetch accounts:", error);
-      throw error;
-    }),
+    axiosInstance.get(API_URL.GET_ACCOUNTS).then((res) => res.data),
 
   addAccountType: (body: { type: string }) =>
-    axiosInstance.post("/api/account/addaccount", body).then((res) => res.data),
+    axiosInstance.post(API_URL.ADD_ACCOUNT_TYPE, body).then((res) => res.data),
 
   addAccountName: (body: { accountTypeId: string; name: string }) =>
-    axiosInstance
-      .post("/api/account/addaccountname", body)
-      .then((res) => res.data),
+    axiosInstance.post(API_URL.ADD_ACCOUNT_NAME, body).then((res) => res.data),
 
   deleteAccountType: (id: string) =>
     axiosInstance.delete(`/api/account/type/${id}`).then((res) => res.data),
@@ -42,42 +71,40 @@ export const API = {
 
   updateName: (id: string, data: { name: string }) =>
     axiosInstance.put(`/api/account/name/${id}`, data).then((res) => res.data),
-  //
-  getNetworthByMonth: (month: number, year: number) =>
-    axiosInstance
-      .get(`/api/networth/getmonth?month=${month}&year=${year}`)
-      .then((res) => res.data),
 
-  // 🟢 Add a new networth entry
+  // ── Net Worth ─────────────────────────────────────────────────────────────
+  getNetworthByMonth: (month: number, year: number) =>
+    axiosInstance.get(API_URL.GET_NETWORTH_BY_MONTH(month, year)).then((res) => res.data),
+
   addNetworth: (body: {
     accountType: string;
     accountName: string;
     balance: number;
-    snapshotDate: string; // or Date — backend will parse
+    snapshotDate: string;
   }) =>
-    axiosInstance
-      .post(`/api/networth/add`, body)
-      .then((res) => res.data),
-    // 🟡 Update a networth entry
+    axiosInstance.post(API_URL.ADD_NETWORTH, body).then((res) => res.data),
+
   updateNetworth: (id: string, body: Partial<{
     accountType: string;
     accountName: string;
     balance: number | string;
     snapshotDate: string;
   }>) =>
-    axiosInstance
-      .put(`/api/networth/update/${id}`, body)
-      .then((res) => res.data),
+    axiosInstance.put(API_URL.UPDATE_NETWORTH(id), body).then((res) => res.data),
 
-  // 🔴 Delete a networth entry
   deleteNetworth: (id: string) =>
-    axiosInstance
-      .delete(`/api/networth/delete/${id}`)
-      .then((res) => res.data),
-  importNetworth: (body: { month: number, year: number, targetDate: string }) =>
-    axiosInstance
-      .post(`/api/networth/import`, body)
-      .then((res) => res.data),
+    axiosInstance.delete(API_URL.DELETE_NETWORTH(id)).then((res) => res.data),
+
+  importNetworth: (body: { month: number; year: number; targetDate: string }) =>
+    axiosInstance.post(API_URL.IMPORT_NETWORTH, body).then((res) => res.data),
+
+  // ── Admin ─────────────────────────────────────────────────────────────────
+  getAdminUsers: () =>
+    axiosInstance.get(API_URL.ADMIN_USERS),
+
+  getAdminUserEmails: (userId: string, from?: string, to?: string) =>
+    axiosInstance.get(API_URL.ADMIN_EMAILS(userId) + buildQuery({ from, to })),
+
+  getAdminUserTransactions: (userId: string, from?: string, to?: string) =>
+    axiosInstance.get(API_URL.ADMIN_TRANSACTIONS(userId) + buildQuery({ from, to })),
 };
-
-

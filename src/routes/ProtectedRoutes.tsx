@@ -1,11 +1,11 @@
 import { API } from "@/api";
+import Loader from "@/components/common/Loader";
 import { useApi } from "@/hooks/useApi";
-import { loginSuccess, logout } from "@/store/authSlice";
 import type { RootState } from "@/store";
+import { loginSuccess, logout } from "@/store/authSlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import Loader from "@/components/common/Loader";
 
 const ProtectedRoute = () => {
   const dispatch = useDispatch();

@@ -1,7 +1,8 @@
 import { Home, SquareDashedMousePointer, Wallet } from "lucide-react";
+import { BACKEND_BASE_URL } from "../../env";
 
 export const googleSignIn = () => {
-  window.open("http://localhost:3000/api/auth/google", "_self");
+  window.open(`${BACKEND_BASE_URL}/api/auth/google`, "_self");
 };
 
 export const MENU_ITEMS = [
