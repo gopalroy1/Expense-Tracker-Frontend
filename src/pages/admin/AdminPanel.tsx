@@ -33,6 +33,7 @@ export const AdminPanel: React.FC = () => {
     callApi(() => API.getAdminUsers())
       .then((res) => setUsers(res.data.users))
       .catch(() => setError("Failed to load users. Make sure you're an admin."));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadEmails = (userId: string, fromDate?: string, toDate?: string) => {
@@ -43,7 +44,36 @@ export const AdminPanel: React.FC = () => {
 
   const loadTransactions = (userId: string, fromDate?: string, toDate?: string) => {
     callTxApi(() => API.getAdminUserTransactions(userId, fromDate, toDate))
-      .then((res) => { setTransactions(res.data.transactions); setTxCount(res.data.count); })
+      .then((res) => {
+        // API returns snake_case; map to camelCase to match Transaction type
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line no-console
+        console.log("[AdminPanel] raw tx sample:", res.data.transactions[0]);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mapped: Transaction[] = res.data.transactions.map((t: any) => ({
+          id: t.id,
+          emailId: t.email_id,
+          userId: t.user_id,
+          amount: t.amount,
+          type: t.type,
+          platform: t.platform,
+          merchant: t.merchant,
+          currency: t.currency,
+          category: t.category,
+          accountType: t.account_type,
+          accountNumber: t.account_number,
+          accountName: t.account_name,
+          transactionDate: t.transaction_date,
+          transactionTime: t.transaction_time,
+          description: t.description,
+          rawSubject: t.raw_subject,
+          isTransactionEmail: t.is_transaction_email,
+          confidence: t.confidence,
+          createdAt: t.created_at,
+        }));
+        setTransactions(mapped);
+        setTxCount(res.data.count ?? mapped.length);
+      })
       .catch(() => setError("Failed to load transactions."));
   };
 
@@ -225,8 +255,9 @@ export const AdminPanel: React.FC = () => {
                       <tbody className="divide-y divide-gray-100">
                         {emails.map((email) => {
                           const hasTx = transactions.some(
-                            (t) => t.emailId === email.id && t.isTransactionEmail && !isNaN(parseFloat(t.amount))
+                            (t) => t.emailId === email.id && t.isTransactionEmail
                           );
+                          const wasProcessed = !hasTx && transactions.some((t) => t.emailId === email.id);
                           return (
                             <tr
                               key={email.id}
@@ -234,12 +265,15 @@ export const AdminPanel: React.FC = () => {
                               className={`cursor-pointer transition-colors group ${
                                 hasTx
                                   ? "bg-emerald-50 hover:bg-emerald-100"
+                                  : wasProcessed
+                                  ? "bg-amber-50 hover:bg-amber-100"
                                   : "hover:bg-blue-50"
                               }`}
                             >
                               <td className="px-4 py-2.5 max-w-[14rem]">
                                 <div className="flex items-center gap-1.5">
                                   {hasTx && <span className="text-emerald-500 shrink-0" title="Has extracted transactions">💳</span>}
+                                  {wasProcessed && <span className="text-amber-400 shrink-0" title="Processed — not a transaction email">○</span>}
                                   <span className="block truncate font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
                                     {email.subject ?? <span className="italic text-gray-300">No subject</span>}
                                   </span>

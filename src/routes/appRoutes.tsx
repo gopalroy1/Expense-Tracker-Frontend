@@ -3,6 +3,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Routes } from "react-router-dom";
 import AccountManager from "../pages/AccountManger";
 import { AdminPanel } from "../pages/admin/AdminPanel";
+import { ExpenseDashboard } from "../pages/expenses/ExpenseDashboard";
 import { DashboardPage } from "../pages/DashboardPage";
 import Home from "../pages/Home";
 import { AppLayout } from "../pages/Layout/AppLayout";
@@ -28,6 +29,7 @@ export default function AppRoutes() {
       <Route element={<ProtectedRoute />}>
         <Route path="/" element={<AppLayout />}>
           <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="expenses" element={<ExpenseDashboard />} />
           <Route path="networth" element={<Networth />} />
           <Route path="accountmanagement" element={<AccountManager />} />
         </Route>

@@ -7,6 +7,7 @@ export const googleSignIn = () => {
 
 export const MENU_ITEMS = [
   { name: "Dashboard", icon: Home, path: "/dashboard" },
+  { name: "Expenses", icon: Wallet, path: "/expenses" },
   { name: "Net Worth", icon: Wallet, path: "/networth" },
   { name: "Account Management", icon: Wallet, path: "/accountmanagement" },
   { name: "Demo", icon:SquareDashedMousePointer, path: "/demo" },

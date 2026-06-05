@@ -25,6 +25,11 @@ export const API_URL = {
   ADMIN_USERS: `/api/admin/users`,
   ADMIN_EMAILS: (userId: string) => `/api/admin/emails/${userId}`,
   ADMIN_TRANSACTIONS: (userId: string) => `/api/admin/transactions/${userId}`,
+
+  // Expenses
+  MONTHLY_SUMMARY: `/api/expenses/monthly-summary`,
+  EXPENSE_TRANSACTIONS: `/api/expenses/transactions`,
+  DAY_DETAIL: `/api/expenses/day`,
 };
 
 function buildQuery(params: Record<string, string | undefined>) {
@@ -107,4 +112,33 @@ export const API = {
 
   getAdminUserTransactions: (userId: string, from?: string, to?: string) =>
     axiosInstance.get(API_URL.ADMIN_TRANSACTIONS(userId) + buildQuery({ from, to })),
+
+  // ── Expenses ──────────────────────────────────────────────────────────────
+  getMonthlySummary: (month: string, accountId?: string) =>
+    axiosInstance.get(API_URL.MONTHLY_SUMMARY + buildQuery({ month, account_id: accountId })),
+
+  getExpenseTransactions: (params: {
+    month: string;
+    page?: number;
+    limit?: number;
+    category?: string;
+    type?: string;
+    search?: string;
+    account_id?: string;
+  }) =>
+    axiosInstance.get(
+      API_URL.EXPENSE_TRANSACTIONS +
+        buildQuery({
+          month: params.month,
+          page: params.page?.toString(),
+          limit: params.limit?.toString(),
+          category: params.category,
+          type: params.type,
+          search: params.search,
+          account_id: params.account_id,
+        })
+    ),
+
+  getDayDetail: (date: string, accountId?: string) =>
+    axiosInstance.get(API_URL.DAY_DETAIL + buildQuery({ date, account_id: accountId })),
 };
