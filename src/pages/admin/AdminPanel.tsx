@@ -46,8 +46,8 @@ export const AdminPanel: React.FC = () => {
     callTxApi(() => API.getAdminUserTransactions(userId, fromDate, toDate))
       .then((res) => {
         // API returns snake_case; map to camelCase to match Transaction type
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        // eslint-disable-next-line no-console
+         
+         
         console.log("[AdminPanel] raw tx sample:", res.data.transactions[0]);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const mapped: Transaction[] = res.data.transactions.map((t: any) => ({
@@ -320,7 +320,7 @@ export const AdminPanel: React.FC = () => {
                           const isCredit = txType === "credit";
                           const conf = parseFloat(tx.confidence);
                           const confColor = conf >= 0.85 ? "text-green-600" : conf >= 0.65 ? "text-yellow-600" : "text-red-500";
-                          const amt = parseFloat(tx.amount);
+                          const amt = parseFloat(tx?.amount ?? "");
                           const amtDisplay = isNaN(amt) ? "—" : `₹${amt.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
                           const dateDisplay = tx.transactionDate
                             ? new Date(tx.transactionDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })

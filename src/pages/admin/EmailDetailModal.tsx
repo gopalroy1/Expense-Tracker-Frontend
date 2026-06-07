@@ -97,7 +97,7 @@ export function EmailDetailModal({
                       const isDebit = tx.type === "debit";
                       const conf = parseFloat(tx.confidence);
                       const confColor = conf >= 0.85 ? "text-green-600 bg-green-50" : conf >= 0.65 ? "text-yellow-600 bg-yellow-50" : "text-red-600 bg-red-50";
-                      const amt = parseFloat(tx.amount);
+                      const amt = parseFloat(tx.amount ?? "");
                       const amtDisplay = isNaN(amt) ? "—" : `₹${amt.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
                       return (
                         <div key={tx.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg text-sm">

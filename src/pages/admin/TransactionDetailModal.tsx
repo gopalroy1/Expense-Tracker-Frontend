@@ -47,7 +47,7 @@ export function TransactionDetailModal({
   const txType = tx.type?.toLowerCase();
   const isDebit = txType === "debit";
   const isCredit = txType === "credit";
-  const amt = parseFloat(tx.amount);
+  const amt = parseFloat(tx.amount ?? "");
   const amtDisplay = isNaN(amt) ? "—" : `₹${amt.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
   const sourceEmail = emails.find((e) => e.id === tx.emailId) ?? null;
 
