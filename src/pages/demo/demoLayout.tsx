@@ -14,15 +14,13 @@ const DemoLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       {/* Top Bar */}
       <div className="h-14 bg-white/80 backdrop-blur border-b border-gray-200 flex items-center justify-between px-6">
         {/* Left */}
-        <Link
-          to="/home"
-          className="flex items-center gap-2 font-semibold text-gray-800 hover:opacity-80"
-        >
-          <span className="text-lg">💸</span>
-          <span>
-            Expense Tracker{" "}
-            <span className="text-sm text-gray-500">Demo</span>
-          </span>
+        <Link to="/home" className="flex items-center gap-3 hover:opacity-80">
+          <img
+            src="/logo-horizontal-dark.svg"
+            alt="myfininsight"
+            className="h-7"
+          />
+          <span className="text-sm text-gray-500">Demo</span>
         </Link>
 
         {/* Right */}

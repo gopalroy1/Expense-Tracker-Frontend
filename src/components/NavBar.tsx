@@ -3,23 +3,18 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-type NavbarProps = {
-  title?: string;
-};
-
-export const Navbar: React.FC<NavbarProps> = ({
-  title = "Expense Tracker",
-}) => {
+export const Navbar: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   return (
     <div className="h-14 backdrop-blur bg-white/80 border-b border-gray-200 flex items-center justify-between px-6">
       {/* Left: App Identity */}
-      <div className="flex items-center gap-3">
-        <span className="text-lg">💸</span>
-        <h1 className="text-sm font-semibold text-gray-800">
-          {title}
-        </h1>
+      <div className="flex items-center">
+        <img
+          src="/logo-horizontal-dark.svg"
+          alt="myfininsight"
+          className="h-7"
+        />
       </div>
 
       {/* Right: User / CTA */}

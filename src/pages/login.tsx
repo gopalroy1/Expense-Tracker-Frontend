@@ -66,6 +66,13 @@ const LoginPage: React.FC = () => {
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded-lg p-8 w-full max-w-md space-y-4"
       >
+        <div className="flex justify-center mb-4">
+          <img
+            src="/logo-icon.svg"
+            alt="myfininsight"
+            className="h-12 w-12"
+          />
+        </div>
         <h2 className="text-2xl font-semibold text-center mb-2">Sign In</h2>
 
         {/* Email */}

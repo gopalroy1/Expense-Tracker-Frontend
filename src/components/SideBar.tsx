@@ -20,10 +20,12 @@ export const Sidebar: React.FC = () => {
       {/* Top */}
       <div>
         {/* Logo */}
-        <Link to="/dashboard">
-        <div className="px-6 py-5 text-xl font-semibold tracking-tight">
-          <span className="text-blue-400">💸</span> Expense Tracker
-        </div>
+        <Link to="/dashboard" className="block px-6 py-5">
+          <img
+            src="/logo-horizontal-light.svg"
+            alt="myfininsight"
+            className="h-7"
+          />
         </Link>
 
         {/* Menu */}
