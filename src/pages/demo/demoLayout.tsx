@@ -16,9 +16,9 @@ const DemoLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {/* Left */}
         <Link to="/home" className="flex items-center gap-3 hover:opacity-80">
           <img
-            src="/logo-horizontal-dark.svg"
+            src="/logo-horizontal-light.svg"
             alt="myfininsight"
-            className="h-7"
+            className="h-10"
           />
           <span className="text-sm text-gray-500">Demo</span>
         </Link>

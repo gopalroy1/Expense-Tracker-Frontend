@@ -20,12 +20,9 @@ export const Sidebar: React.FC = () => {
       {/* Top */}
       <div>
         {/* Logo */}
-        <Link to="/dashboard" className="block px-6 py-5">
-          <img
-            src="/logo-horizontal-light.svg"
-            alt="myfininsight"
-            className="h-7"
-          />
+        <Link to="/dashboard" className="flex items-center gap-3 px-5 py-5">
+          <img src="/logo-icon.svg" alt="" className="h-9 w-9 flex-shrink-0" aria-hidden="true" />
+          <span className="text-white font-semibold text-lg tracking-tight">myfininsight</span>
         </Link>
 
         {/* Menu */}

@@ -11,9 +11,9 @@ export const Navbar: React.FC = () => {
       {/* Left: App Identity */}
       <div className="flex items-center">
         <img
-          src="/logo-horizontal-dark.svg"
+          src="/logo-horizontal-light.svg"
           alt="myfininsight"
-          className="h-7"
+          className="h-10"
         />
       </div>
 
